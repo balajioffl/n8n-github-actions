@@ -1,0 +1,25 @@
+name: GitHub to Slack and Email
+
+on:
+  push:
+    branches: [ main ]
+  issues:
+    types: [ opened, edited ]
+  pull_request:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send event to n8n
+        run: |
+          curl -X POST https://balajis.app.n8n.cloud/webhook-test/github-alert \
+          -H "Content-Type: application/json" \
+          -d '{
+            "event": "${{ github.event_name }}",
+            "repo": "${{ github.repository }}",
+            "user": "${{ github.actor }}",
+            "branch": "${{ github.ref }}",
+            "commit": "${{ github.sha }}"
+          }'
